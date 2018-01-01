@@ -14,7 +14,7 @@ source("R/Load_Data.R")
 
 # Load data
 clusters = Load_Data(TRUE)
-clusterlist = sort(unique(clusters$cluster))
+cluster_list = sort(unique(clusters$cluster))
 #vendornames = c("Test", "Test2")
 
 
@@ -30,9 +30,9 @@ ui <- dashboardPage(
     sidebarMenu(
       menuItem("Home", tabName = "home", icon = icon("home")),
       menuItem("Dashboard", tabName = "dashboard", icon = icon("dashboard")),
-      selectInput(inputId = 'Cluster', 
+      selectInput(inputId = 'cluster', 
                   label = "Choose cluster:", 
-                  choices = clusterlist,
+                  choices = cluster_list,
                   selected = 1
                   )
       ),
@@ -47,7 +47,7 @@ ui <- dashboardPage(
       tabItem(tabName = "dashboard",
               fluidRow(
                 box(DT::dataTableOutput("contractor_table"), width = 5, title = "All Contractors"),
-                box(DT::dataTableOutput("contractor_per_cluster"), width = 2, title = "Contractors per Cluster"),
+                box(DT::dataTableOutput("contractor_per_cluster_table"), width = 2, title = "Contractors per Cluster"),
                 box(DT::dataTableOutput("cluster_table"), width = 5, title = "Contractor Cluster")
               )
       )

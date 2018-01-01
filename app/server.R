@@ -32,6 +32,7 @@ server <- function(input, output){
   
   v <- reactiveValues(doPlot = FALSE)
   
+  # Check to see if update button was clicked
   observeEvent(input$update, {
     v$doPlot <- input$update
   })
@@ -42,7 +43,8 @@ server <- function(input, output){
   #                                                               #
   #################################################################
   
-  dataInput <- eventReactive(input$update, {
+  # If update button was clicked get cluster designation data
+  cluster_data <- eventReactive(input$update, {
     
     colnames(Data) = c("DUNS", "Vendor Name", "Cluster")
     Data
@@ -54,12 +56,13 @@ server <- function(input, output){
   #                                                               #
   #################################################################
 
-  output$contractor_table<- renderDataTable({
+  
+  output$contractor_table <- renderDataTable({
     if (v$doPlot == FALSE) return()
     
     isolate({
       
-      datatable(dataInput(), 
+      datatable(cluster_data(), 
                 options = list("pageLength" = 20),
                 caption = "All Contractors: This is a list of all the companies in the data. Use this table to search for a company
                 to find what cluster it belongs to.",
@@ -68,29 +71,30 @@ server <- function(input, output){
     
   }) # End contractor_table
   
-  output$contractor_per_cluster<- renderDataTable({
+
+  output$contractor_per_cluster_table <- renderDataTable({
     if (v$doPlot == FALSE) return()
     
     isolate({
       
-      data = dataInput() %>% group_by(Cluster) %>% summarise(ct = n())
-      colnames(data) = c("Cluster", "Number of Companies")
+      temp_data = cluster_data() %>% group_by(Cluster) %>% summarise(ct = n())
+      colnames(temp_data) = c("Cluster", "Number of Companies")
       
-      datatable(data, 
+      datatable(temp_data, 
                 options = list("pageLength" = 20),
                 caption = "Contractors per Cluster: Most contractors are in one cluster.",
                 rownames = FALSE)
     })
     
-    }) # End contractor_table
+    }) # End contractor_per_cluster_table
     
-  output$cluster_table<- renderDataTable({
+  output$cluster_table <- renderDataTable({
     if (v$doPlot == FALSE) return()
 
     isolate({
       
-      Cluster = input$Cluster
-      datatable(dataInput()[dataInput()$Cluster == Cluster,], 
+      temp_cluster = input$cluster
+      datatable(cluster_data()[cluster_data()$Cluster == temp_cluster,], 
                 options = list("pageLength" = 20),
                 caption = 'Contractor Cluster: This is a list of companies in the chosen cluster.',
                 rownames = FALSE)
