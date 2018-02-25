@@ -15,6 +15,7 @@ source("R/Load_Data.R")
 
 # Load data
 Data = Load_Data(TRUE)
+vendornames = sort(unique(Data$vendorname))
 
 ###########################################################################################################################
 #                                                                                                                         #
@@ -22,7 +23,13 @@ Data = Load_Data(TRUE)
 #                                                                                                                         #
 ###########################################################################################################################
 
-server <- function(input, output){
+server <- function(input, output, session){
+  
+  updateSelectizeInput(session = session,
+                         inputId = "names", 
+                         label = "Choose company:",
+                         choices = vendornames, 
+                         server = TRUE)
   
   #################################################################
   #                                                               #
@@ -57,19 +64,19 @@ server <- function(input, output){
   #################################################################
 
   
-  output$contractor_table <- renderDataTable({
-    if (v$doPlot == FALSE) return()
-    
-    isolate({
-      
-      datatable(cluster_data(), 
-                options = list("pageLength" = 20),
-                caption = "All Contractors: This is a list of all the companies in the data. Use this table to search for a company
-                to find what cluster it belongs to.",
-                rownames = FALSE)
-    })
-    
-  }) # End contractor_table
+  # output$contractor_table <- renderDataTable({
+  #   if (v$doPlot == FALSE) return()
+  #   
+  #   isolate({
+  #     
+  #     datatable(cluster_data(), 
+  #               options = list("pageLength" = 20),
+  #               caption = "All Contractors: This is a list of all the companies in the data. Use this table to search for a company
+  #               to find what cluster it belongs to.",
+  #               rownames = FALSE)
+  #   })
+  #   
+  # }) # End contractor_table
   
 
   output$contractor_per_cluster_table <- renderDataTable({
@@ -93,10 +100,12 @@ server <- function(input, output){
 
     isolate({
       
-      temp_cluster = input$cluster
-      datatable(cluster_data()[cluster_data()$Cluster == temp_cluster,], 
+      temp_vendorname = input$names
+      cluster_chosen = cluster_data()$Cluster[cluster_data()$`Vendor Name` == temp_vendorname]
+    
+      datatable(cluster_data()[cluster_data()$Cluster == cluster_chosen,], 
                 options = list("pageLength" = 20),
-                caption = 'Contractor Cluster: This is a list of companies in the chosen cluster.',
+                caption = 'Contractor Cluster: This is a list of companies most similar to the chosen company.',
                 rownames = FALSE)
     })
 
