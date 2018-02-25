@@ -51,8 +51,8 @@ ui <- dashboardPage(
       tabItem(tabName = "dashboard",
               fluidRow(
                 #box(DT::dataTableOutput("contractor_table"), width = 5, title = "All Contractors"),
-                box(DT::dataTableOutput("contractor_per_cluster_table"), width = 2, title = "Contractors per Cluster"),
-                box(DT::dataTableOutput("cluster_table"), width = 10, title = "Contractor Cluster")
+                box(DT::dataTableOutput("contractor_per_cluster_table"), width = 4, title = "Contractors per Cluster"),
+                box(DT::dataTableOutput("cluster_table"), width = 8, title = "Contractor Cluster")
               )
       )
     )
